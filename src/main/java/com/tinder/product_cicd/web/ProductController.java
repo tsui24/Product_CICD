@@ -7,7 +7,6 @@ import com.tinder.product_cicd.web.mapper.ProductMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,5 +76,11 @@ public class ProductController {
     @Operation(summary = "Search products by name")
     public List<ProductDto> search(@RequestParam String q) {
         return service.searchByName(q).stream().map(ProductMapper::toDto).collect(Collectors.toList());
+    }
+
+    @GetMapping("/count")
+    @Operation(summary = "Get total count of products")
+    public long count() {
+        return service.countProducts();
     }
 }

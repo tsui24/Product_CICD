@@ -53,4 +53,8 @@ public class ProductService {
     public List<Product> searchByName(String q) {
         return repository.findByNameContainingIgnoreCase(q);
     }
+
+    public long countProducts() {
+        return repository.count();
+    }
 }
