@@ -43,4 +43,11 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/product-cicd:latest
             docker stop my-app || true
             docker rm my-app || true
-            docker run -d --name my-app -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/product-cicd:latest
+            # Chạy container với biến môi trường từ GitHub Secrets
+            # Sử dụng --network="host" để dễ dàng kết nối tới MySQL chạy trên cùng EC2
+            docker run -d --name my-app \
+              --network="host" \
+              -e SPRING_DATASOURCE_URL=${{ secrets.DB_URL }} \
+              -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }} \
+              -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              ${{ secrets.DOCKER_USERNAME }}/product-cicd:latest

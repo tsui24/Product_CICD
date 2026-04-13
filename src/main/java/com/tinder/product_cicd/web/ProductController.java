@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
+@Tag(name = "Product", description = "The Product Management API")
 public class ProductController {
 
     private final ProductService service;
@@ -27,6 +30,7 @@ public class ProductController {
     }
 
     @GetMapping
+    @Operation(summary = "List all products", description = "Get a paginated list of products")
     public Page<ProductDto> list(@RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "20") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -35,6 +39,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a product by ID")
     public ResponseEntity<ProductDto> get(@PathVariable Long id) {
         return service.getById(id)
                 .map(ProductMapper::toDto)
@@ -43,6 +48,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new product")
     public ResponseEntity<ProductDto> create(@Valid @RequestBody ProductDto dto) {
         Product created = service.create(ProductMapper.toEntity(dto));
         ProductDto out = ProductMapper.toDto(created);
@@ -50,6 +56,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update an existing product")
     public ResponseEntity<ProductDto> update(@PathVariable Long id, @Valid @RequestBody ProductDto dto) {
         try {
             Product updated = service.update(id, ProductMapper.toEntity(dto));
@@ -60,12 +67,14 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a product")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/search")
+    @Operation(summary = "Search products by name")
     public List<ProductDto> search(@RequestParam String q) {
         return service.searchByName(q).stream().map(ProductMapper::toDto).collect(Collectors.toList());
     }
